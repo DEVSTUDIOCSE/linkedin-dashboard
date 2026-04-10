@@ -111,7 +111,7 @@ function DashboardContent() {
         client_id: clientId,
         redirect_uri: redirectUri,
         state,
-        scope: 'r_liteprofile r_emailaddress w_member_social',
+        scope: 'r_liteprofile w_member_social',
       });
       window.location.href = `https://www.linkedin.com/oauth/v2/authorization?${params.toString()}`;
     } catch (err) {

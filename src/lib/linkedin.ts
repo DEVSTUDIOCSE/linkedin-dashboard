@@ -44,7 +44,7 @@ export function buildLinkedInAuthUrl(state: string): string {
     client_id: clientId,
     redirect_uri: redirectUri!,
     state,
-    scope: 'r_liteprofile r_emailaddress w_member_social',
+    scope: 'r_liteprofile w_member_social',
   });
 
   return `${LINKEDIN_AUTH_URL}?${params.toString()}`;
