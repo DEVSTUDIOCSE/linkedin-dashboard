@@ -111,20 +111,30 @@ export default function PostCard({ post, linkedInConnected }: PostCardProps) {
       >
         {/* PDF thumbnail area */}
         <div className="relative bg-muted/40 flex items-center justify-center h-44 border-b border-border/40 overflow-hidden">
-          {/* Decorative lines mimicking a PDF page */}
-          <div className="absolute inset-4 rounded border border-border/30 bg-background/60 flex flex-col gap-2 p-3 pointer-events-none">
-            <div className="h-1.5 w-3/4 rounded-full bg-muted-foreground/15" />
-            <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
-            <div className="h-1.5 w-5/6 rounded-full bg-muted-foreground/10" />
-            <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
-            <div className="h-1.5 w-4/5 rounded-full bg-muted-foreground/10" />
-            <div className="mt-1 h-1.5 w-2/3 rounded-full bg-muted-foreground/10" />
-            <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
-          </div>
-          <FileText
-            className="relative z-10 h-10 w-10 text-[#0A66C2]/70 group-hover:text-[#0A66C2] transition-colors duration-200"
-            strokeWidth={1.5}
-          />
+          {post.pdfUrl ? (
+            <>
+              {/* Decorative lines mimicking a PDF page */}
+              <div className="absolute inset-4 rounded border border-border/30 bg-background/60 flex flex-col gap-2 p-3 pointer-events-none">
+                <div className="h-1.5 w-3/4 rounded-full bg-muted-foreground/15" />
+                <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
+                <div className="h-1.5 w-5/6 rounded-full bg-muted-foreground/10" />
+                <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
+                <div className="h-1.5 w-4/5 rounded-full bg-muted-foreground/10" />
+                <div className="mt-1 h-1.5 w-2/3 rounded-full bg-muted-foreground/10" />
+                <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
+              </div>
+              <FileText
+                className="relative z-10 h-10 w-10 text-[#0A66C2]/70 group-hover:text-[#0A66C2] transition-colors duration-200"
+                strokeWidth={1.5}
+              />
+            </>
+          ) : (
+            <div className="absolute inset-3 rounded border border-border/30 bg-background/60 p-3 pointer-events-none overflow-hidden">
+              <p className="text-[10px] leading-relaxed text-muted-foreground/60 line-clamp-[8]">
+                {post.postContent?.substring(0, 200) || 'Text post'}
+              </p>
+            </div>
+          )}
         </div>
 
         <CardContent className="pt-4 pb-3 px-4">
@@ -168,14 +178,23 @@ export default function PostCard({ post, linkedInConnected }: PostCardProps) {
         </CardFooter>
       </Card>
 
-      {viewerOpen && post.pdfUrl && (
+      {(viewerOpen && post.pdfUrl) ? (
         <PDFViewer
           open={viewerOpen}
           onOpenChange={setViewerOpen}
           title={post.title}
           pdfUrl={post.pdfUrl}
         />
-      )}
+      ) : (viewerOpen && post.postContent) ? (
+        <PDFViewer
+          open={viewerOpen}
+          onOpenChange={setViewerOpen}
+          title={post.title}
+          pdfUrl=""
+          postContent={post.postContent}
+          hashtags={post.hashtags}
+        />
+      ) : null}
     </>
   );
 }
