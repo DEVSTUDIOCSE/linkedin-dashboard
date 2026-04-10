@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 
     // ── Fetch LinkedIn profile for URN ──────────────────────────────────────
     const profile = await getLinkedInProfile(tokenData.access_token);
-    const linkedInUrn = `urn:li:person:${profile.id}`;
+    const linkedInUrn = `urn:li:person:${profile.sub}`;
 
     // ── Store in Firestore (admin) ──────────────────────────────────────────
     // Initialize admin app via getAdminAuth side-effect

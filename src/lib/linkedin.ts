@@ -7,7 +7,7 @@
 const LINKEDIN_AUTH_URL = 'https://www.linkedin.com/oauth/v2/authorization';
 const LINKEDIN_TOKEN_URL = 'https://www.linkedin.com/oauth/v2/accessToken';
 const LINKEDIN_UGC_POSTS_URL = 'https://api.linkedin.com/v2/ugcPosts';
-const LINKEDIN_PROFILE_URL = 'https://api.linkedin.com/v2/me';
+const LINKEDIN_PROFILE_URL = 'https://api.linkedin.com/v2/userinfo';
 
 export interface LinkedInTokenResponse {
   access_token: string;
@@ -16,9 +16,11 @@ export interface LinkedInTokenResponse {
 }
 
 export interface LinkedInProfile {
-  id: string;
-  localizedFirstName: string;
-  localizedLastName: string;
+  sub: string;
+  name: string;
+  given_name?: string;
+  family_name?: string;
+  picture?: string;
 }
 
 export interface LinkedInPostResult {
@@ -44,7 +46,7 @@ export function buildLinkedInAuthUrl(state: string): string {
     client_id: clientId,
     redirect_uri: redirectUri!,
     state,
-    scope: 'r_liteprofile w_member_social',
+    scope: 'openid profile w_member_social',
   });
 
   return `${LINKEDIN_AUTH_URL}?${params.toString()}`;
