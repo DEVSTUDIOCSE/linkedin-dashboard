@@ -20,6 +20,8 @@ import { toast } from 'sonner';
 export interface Post {
   id: string;
   title: string;
+  postContent?: string;
+  hashtags?: string[];
   pdfUrl: string;
   status: 'draft' | 'published' | 'scheduled' | string;
   createdAt: { toDate: () => Date } | Date | string | null;
@@ -77,7 +79,13 @@ export default function PostCard({ post, linkedInConnected }: PostCardProps) {
       const res = await fetch('/api/linkedin/post', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postId: post.id, title: post.title, pdfUrl: post.pdfUrl }),
+        body: JSON.stringify({
+          postId: post.id,
+          title: post.title,
+          postContent: post.postContent || '',
+          hashtags: post.hashtags || [],
+          pdfUrl: post.pdfUrl,
+        }),
       });
       const data = (await res.json()) as { success?: boolean; error?: string };
       if (!res.ok || !data.success) {

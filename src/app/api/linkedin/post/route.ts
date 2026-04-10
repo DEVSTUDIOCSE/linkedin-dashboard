@@ -18,6 +18,8 @@ import { postToLinkedIn } from '@/lib/linkedin';
 interface PostRequestBody {
   postId?: string;
   title?: string;
+  postContent?: string;
+  hashtags?: string[];
   pdfUrl?: string;
 }
 
@@ -36,10 +38,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: false, error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { title, pdfUrl } = body;
-  if (!title) {
-    return NextResponse.json({ success: false, error: 'Missing title' }, { status: 400 });
-  }
+  const { title, postContent, hashtags, pdfUrl } = body;
 
   // ── Load LinkedIn token from Firestore (admin) ──────────────────────────
   getAdminAuth(); // ensures Admin SDK is initialized
@@ -58,9 +57,15 @@ export async function POST(request: NextRequest) {
   }
 
   // ── Build post text ─────────────────────────────────────────────────────
-  const text = pdfUrl
-    ? `${title}\n\n${pdfUrl}`
-    : title;
+  const parts: string[] = [];
+  if (title) parts.push(title);
+  if (postContent) parts.push(postContent);
+  if (hashtags && hashtags.length > 0) parts.push(hashtags.join(' '));
+  const text = parts.join('\n\n');
+
+  if (!text) {
+    return NextResponse.json({ success: false, error: 'No content to post. Provide title, postContent, or hashtags.' }, { status: 400 });
+  }
 
   // ── Publish to LinkedIn ─────────────────────────────────────────────────
   try {
