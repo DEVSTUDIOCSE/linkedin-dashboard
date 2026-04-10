@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import PDFViewer from './PDFViewer';
+import SlideViewer from './SlideViewer';
 import {
   FileText,
   Linkedin,
@@ -14,6 +14,7 @@ import {
   Clock,
   AlertCircle,
   Loader2,
+  Images,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -69,6 +70,9 @@ export default function PostCard({ post, linkedInConnected }: PostCardProps) {
   };
   const StatusIcon = statusInfo.icon;
 
+  const hasImages = post.slideImageUrls && post.slideImageUrls.length > 0;
+  const firstSlideUrl = hasImages ? post.slideImageUrls![0] : null;
+
   const handlePostToLinkedIn = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!linkedInConnected) {
@@ -111,25 +115,32 @@ export default function PostCard({ post, linkedInConnected }: PostCardProps) {
         tabIndex={0}
         onKeyDown={(e) => e.key === 'Enter' && setViewerOpen(true)}
       >
-        {/* PDF thumbnail area */}
+        {/* Thumbnail area */}
         <div className="relative bg-muted/40 flex items-center justify-center h-44 border-b border-border/40 overflow-hidden">
-          {post.pdfUrl ? (
+          {firstSlideUrl ? (
             <>
-              {/* Decorative lines mimicking a PDF page */}
-              <div className="absolute inset-4 rounded border border-border/30 bg-background/60 flex flex-col gap-2 p-3 pointer-events-none">
-                <div className="h-1.5 w-3/4 rounded-full bg-muted-foreground/15" />
-                <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
-                <div className="h-1.5 w-5/6 rounded-full bg-muted-foreground/10" />
-                <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
-                <div className="h-1.5 w-4/5 rounded-full bg-muted-foreground/10" />
-                <div className="mt-1 h-1.5 w-2/3 rounded-full bg-muted-foreground/10" />
-                <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
-              </div>
-              <FileText
-                className="relative z-10 h-10 w-10 text-[#0A66C2]/70 group-hover:text-[#0A66C2] transition-colors duration-200"
-                strokeWidth={1.5}
+              <img
+                src={firstSlideUrl}
+                alt={post.title}
+                className="w-full h-full object-cover"
               />
+              {hasImages && post.slideImageUrls!.length > 1 && (
+                <div className="absolute top-2 right-2 bg-black/60 text-white text-[10px] font-medium px-1.5 py-0.5 rounded flex items-center gap-1">
+                  <Images className="h-3 w-3" />
+                  {post.slideImageUrls!.length}
+                </div>
+              )}
             </>
+          ) : post.pdfUrl ? (
+            <div className="absolute inset-4 rounded border border-border/30 bg-background/60 flex flex-col gap-2 p-3 pointer-events-none">
+              <div className="h-1.5 w-3/4 rounded-full bg-muted-foreground/15" />
+              <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
+              <div className="h-1.5 w-5/6 rounded-full bg-muted-foreground/10" />
+              <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
+              <div className="h-1.5 w-4/5 rounded-full bg-muted-foreground/10" />
+              <div className="mt-1 h-1.5 w-2/3 rounded-full bg-muted-foreground/10" />
+              <div className="h-1.5 w-full rounded-full bg-muted-foreground/10" />
+            </div>
           ) : (
             <div className="absolute inset-3 rounded border border-border/30 bg-background/60 p-3 pointer-events-none overflow-hidden">
               <p className="text-[10px] leading-relaxed text-muted-foreground/60 line-clamp-[8]">
@@ -180,23 +191,17 @@ export default function PostCard({ post, linkedInConnected }: PostCardProps) {
         </CardFooter>
       </Card>
 
-      {(viewerOpen && post.pdfUrl) ? (
-        <PDFViewer
+      {viewerOpen && (
+        <SlideViewer
           open={viewerOpen}
           onOpenChange={setViewerOpen}
           title={post.title}
+          slideImageUrls={post.slideImageUrls}
           pdfUrl={post.pdfUrl}
-        />
-      ) : (viewerOpen && post.postContent) ? (
-        <PDFViewer
-          open={viewerOpen}
-          onOpenChange={setViewerOpen}
-          title={post.title}
-          pdfUrl=""
           postContent={post.postContent}
           hashtags={post.hashtags}
         />
-      ) : null}
+      )}
     </>
   );
 }
