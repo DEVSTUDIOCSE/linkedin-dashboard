@@ -104,7 +104,7 @@ function DashboardContent() {
       const state = crypto.randomUUID();
       sessionStorage.setItem('linkedin_oauth_state', state);
 
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+      const appUrl = window.location.origin;
       const redirectUri = `${appUrl}/api/auth/linkedin`;
       const params = new URLSearchParams({
         response_type: 'code',

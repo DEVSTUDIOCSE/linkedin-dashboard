@@ -30,10 +30,13 @@ export interface LinkedInPostResult {
  */
 export function buildLinkedInAuthUrl(state: string): string {
   const clientId = process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID;
-  const redirectUri = process.env.LINKEDIN_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/linkedin`;
+  const redirectUri = process.env.LINKEDIN_REDIRECT_URI;
 
   if (!clientId) {
     throw new Error('NEXT_PUBLIC_LINKEDIN_CLIENT_ID is not configured');
+  }
+  if (!redirectUri) {
+    throw new Error('LINKEDIN_REDIRECT_URI is not configured');
   }
 
   const params = new URLSearchParams({
@@ -53,7 +56,7 @@ export function buildLinkedInAuthUrl(state: string): string {
 export async function exchangeLinkedInCode(code: string): Promise<LinkedInTokenResponse> {
   const clientId = process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID;
   const clientSecret = process.env.LINKEDIN_CLIENT_SECRET;
-  const redirectUri = process.env.LINKEDIN_REDIRECT_URI || `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/linkedin`;
+  const redirectUri = process.env.LINKEDIN_REDIRECT_URI;
 
   if (!clientId || !clientSecret) {
     throw new Error('LinkedIn client credentials are not configured');
